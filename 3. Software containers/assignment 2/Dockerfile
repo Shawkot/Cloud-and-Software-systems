@@ -10,16 +10,24 @@ COPY requirements.txt .
 
 # Install dependencies and tools in a single RUN command
 RUN apt-get update && \
-    apt-get install -y gcc python3-dev && \
-    pip install --no-cache-dir -r requirements.txt 
+    apt-get install -y --no-install-recommends \
+    python3-pip \
+    gcc \
+    python3-dev && \
+    pip3 install -r requirements.txt && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN pip install --upgrade pip
+#RUN pip install --upgrade pip
 
 #RUN apt-get update && apt-get install -y python3-pip
 
+COPY . .
+
+
+
 
 # Copy the rest of the application code into the container
-COPY . .
 
 # Syntax check
 #RUN python3 -m compileall .
