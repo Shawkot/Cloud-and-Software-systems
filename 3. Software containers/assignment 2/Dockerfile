@@ -10,9 +10,8 @@ COPY requirements.txt .
 
 # Install dependencies and tools in a single RUN command
 RUN apt-get update && \
-    apt-get install -y gcc g++ python3-dev && \
-    pip install --no-cache-dir -r requirements.txt
-    
+    apt-get install -y gcc python3-dev && \
+    pip install --no-cache-dir -r requirements.txt 
 
 RUN pip install --upgrade pip
 
@@ -20,7 +19,7 @@ RUN pip install --upgrade pip
 
 
 # Copy the rest of the application code into the container
-# COPY . .
+COPY . .
 
 # Syntax check
 #RUN python3 -m compileall .
