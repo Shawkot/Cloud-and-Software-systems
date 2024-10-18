@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: docker.io/cse4100/kubernetes-custom-nginx:1.0
+        resources:
+          limits:
+            memory: "16Mi"
+            cpu: "100m"
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: nginx-auth
+          mountPath: /etc/nginx/.htpasswd
+          subPath: htpasswd
+        - name: nginx-config
+          mountPath: /etc/nginx/conf.d
+          #subPath: nginx.conf
+          
+      volumes:
+      - name: nginx-auth
+        secret:
+          secretName: nginx-auth
+      - name: nginx-config
+        configMap:
+          name: nginx-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: css-secret-web-server
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: nginx
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+data:
+  nginx.conf: |
+
+    # Add the server block here
+    
+    server {
+      listen 80;
+      location / {
+        root /usr/share/nginx;
+        index index.html;
+      }
+     
+      
+      # /public directory, accessible without authentication
+      location /public {
+        auth_basic off; 
+      }
+
+      # Root path requires authentication
+      location / {
+        auth_basic "Restricted Access";
+        auth_basic_user_file /etc/nginx/.htpasswd;
+      }
+    }
+    
+    
