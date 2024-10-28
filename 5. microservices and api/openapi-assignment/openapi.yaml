@@ -1,4 +1,4 @@
-openapi: 3.1.0
+openapi: 3.0.0
 info:
   title: Bookstore - OpenAPI 3.1.0
   description: microservice and api development exercise
@@ -13,21 +13,18 @@ paths:
     post:
       tags:
         - book
-      summary: shows all books
-      description: this path will get all the books
+      summary: Create a new book
+      description: This path will create a new book
       operationId: createNewBook
       requestBody:
-        description: Create a new book
+        required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/Book'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Book'
       responses:
         '201':
-          description: Created
+          description: Book successfully created
           content:
             application/json:
               schema:
@@ -38,23 +35,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /books:
     get:
       tags:
         - book
-      summary: displays all books
-      description: this path return all the available books
+      summary: Retrieve all books
+      description: This path returns all available books
       operationId: returnBooks
       parameters:
         - name: author
           in: query
-          description: return books by author name
-          required: true
+          description: Return books by author name
+          required: false
           schema:
             type: string
       responses:
         '200':
-          description: Ok
+          description: A list of books
           content:
             application/json:
               schema:
@@ -65,12 +68,49 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /book/{book_id}:
+    get:
+      tags:
+        - book
+      summary: Retrieve a book by ID
+      description: This operation retrieves a book by its ID
+      operationId: getBookById
+      parameters:
+        - name: book_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A single book
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     put:
       tags:
         - book
-      summary: update a book
-      description: update a book by id and take book_id as path value
+      summary: Update a book
+      description: Update a book by its ID
       operationId: updateBook
       parameters:
         - name: book_id
@@ -79,14 +119,14 @@ paths:
           schema:
             type: string
       requestBody:
-        description: take the Book schema as request body
+        required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/Book'
       responses:
         '200':
-          description: Ok
+          description: Book successfully updated
           content:
             application/json:
               schema:
@@ -103,11 +143,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     delete:
       tags:
         - book
-      summary: delete a book
-      description: this operation involves deleting a book by it's id
+      summary: Delete a book
+      description: This operation deletes a book by its ID
       operationId: deleteBook
       parameters:
         - name: book_id
@@ -120,6 +166,12 @@ paths:
           description: No Content
         '404':
           description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
           content:
             application/json:
               schema:
@@ -149,6 +201,21 @@ components:
         publish_date:
           type: string
           format: date-time
+        created_date:
+          type: string
+          format: date-time
+          readOnly: true
+        modified_date:
+          type: string
+          format: date-time
+          readOnly: true
+        location:
+          type: string
+          maxLength: 100
+        access:
+          type: string
+          enum: [public, private, restricted]
+          description: Access level of the book
       required:
         - name
         - author
