@@ -1,0 +1,176 @@
+openapi: 3.1.0
+info:
+  title: Bookstore - OpenAPI 3.1.0
+  description: microservice and api development exercise
+  version: 1.0.0
+servers:
+  - url: localhost:8000
+tags:
+  - name: book
+    description: all operations related to books.
+paths:
+  /book:
+    post:
+      tags:
+        - book
+      summary: shows all books
+      description: this path will get all the books
+      operationId: createNewBook
+      requestBody:
+        description: Create a new book
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Book'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Book'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '422':
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /books:
+    get:
+      tags:
+        - book
+      summary: displays all books
+      description: this path return all the available books
+      operationId: returnBooks
+      parameters:
+        - name: author
+          in: query
+          description: return books by author name
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Books'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /book/{book_id}:
+    put:
+      tags:
+        - book
+      summary: update a book
+      description: update a book by id and take book_id as path value
+      operationId: updateBook
+      parameters:
+        - name: book_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: take the Book schema as request body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Book'
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - book
+      summary: delete a book
+      description: this operation involves deleting a book by it's id
+      operationId: deleteBook
+      parameters:
+        - name: book_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Book:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+        name:
+          type: string
+          maxLength: 50
+        author:
+          type: string
+          maxLength: 50
+        isbn:
+          type: string
+          minLength: 13
+          maxLength: 13
+        rating:
+          type: number
+          minimum: 0
+          maximum: 5
+        publish_date:
+          type: string
+          format: date-time
+      required:
+        - name
+        - author
+        - isbn
+        - rating
+        - publish_date
+    Books:
+      type: array
+      items:
+        $ref: '#/components/schemas/Book'
+    Success:
+      type: object
+      properties:
+        message:
+          type: string
+          example: 'Book successfully created'
+        id:
+          type: string
+          example: '123'
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          example: 'Sorry something goes wrong, try again!'
