@@ -8,6 +8,11 @@
   - Configuration of cloud SDK in local machine to interact with the platform via CLI.
      
 ### Module 2: Infrastructure Provisioning with Terraform
+#### Related skills:
+  - Infrastrucuture as Code using Terraform CDKTF
+  - Infrastrucuture provisioning with Terraform e.g. cloud storage bucket,virtual machines, etc.
+  - Using input and output variables, environment variables in Terraform
+  - Creating resources with block definition e.g. google_compute_instance, google_compute_network, google_compute_firewall, google_storage_bucket, and google_storage_bucket_object blocks.
 ### Module 3: Software Container
 ### Module 4: Container Orchestration and Serverless Computing
 ### Module 5: API Design and Microservices
