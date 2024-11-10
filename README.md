@@ -41,5 +41,12 @@
   - Completing a full project where a sample application is built, then containerized with Docker, connected to a MongoDB database (running in another container), and finally deployed using Kubernetes
     
 ### Module 6: Cloud-based Communication
+#### Skills learned:
+  - Microservice pattern and communication style
+  - Synchronous blocking, asynchronous non-blocking, event-driven, Request-response, and common data.
+  - RabbitMQ message broker, remote procedure call (RPC) with gRPC.
+  - Conceptual overview: distributed transaction, two-phase commit (2PC), saga (orchestrated and choreographed)
+  - Istio service mesh
+    
 ### Module 7: DevOps
 
