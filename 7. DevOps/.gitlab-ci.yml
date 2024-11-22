@@ -1,0 +1,45 @@
+# Create following jobs here
+# - lint
+# - test
+# - build
+# - publish
+variables:
+  REPOSITORY_PATH: europe-west1-docker.pkg.dev/shawkot-scs-2024/courses-api
+   
+lint:
+  image: python:3.10.8-alpine3.16
+  before_script:
+    - pip install --no-cache-dir -r ./requirements.txt
+    - pip install pylint
+  script:
+    - pylint ./app/main.py
+test:
+  image: python:3.10.8-alpine3.16
+  before_script:
+    - pip install --no-cache-dir -r ./requirements.txt
+    - pip install pytest
+  script:
+    - pytest ./app/tests/test_main.py
+build:
+  image: docker:24
+  services:
+    - docker:24-dind
+  variables:
+    DOCKER_TLS_CERTDIR: "/certs"
+  script:
+    - docker build --network host -t $REPOSITORY_PATH/courses-api:v1 .
+  
+publish: 
+  image: docker:24
+  services:
+    - docker:24-dind
+  before_script:
+    - cat $GCP_CREDENTIALS | docker login -u _json_key --password-stdin https://europe-west1-docker.pkg.dev
+  variables:
+    DOCKER_TLS_CERTDIR: "/certs"
+  script:
+    - docker push $REPOSITORY_PATH/courses-api:v1
+  needs:
+    - build
+
+
